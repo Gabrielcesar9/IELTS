@@ -15,3 +15,10 @@ export const updateWeading = ()=>{
         type:'DONE'
     }
 }
+
+export const updateEmail = (email) =>{
+    return{
+        type:'EMAIL',
+        payload:email
+    }
+}
