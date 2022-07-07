@@ -7,10 +7,12 @@ import S4 from '../assets/audios/S4.mp3'
 import {useHistory} from 'react-router-dom'
 import notebook from '../assets/images/notebook.jpg'
 import axios from 'axios';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateListening } from '../actions'
 
 const ListeningSection = () =>{
-    console.log('Listening', useSelector(state => state.Listening))
+    const dispatch = useDispatch()
+    
     scroll(0,0);
     window.onbeforeunload = function() { return "Your work will be lost."; };
     const history = useHistory();
@@ -58,16 +60,11 @@ const ListeningSection = () =>{
     }
     var report = {
     }
-
-    if(history.location.Dones){
-        var Dones = history.location.Dones
-    }else{
-        var Dones = {reading:false,
-            listening:false,
-            writing:false,
-            email:history.location.state}}
-    console.log('emaillistening',history.location.state)
-    
+    var Dones = {reading:useSelector(state=>state.Reading),
+        listening:useSelector(state=>state.Listening),
+        writing:useSelector(state=>state.Writing),
+        email:useSelector(state=>state.Email)}
+    console.log('listeningDones1', Dones)
     const {register, handleSubmit, formState:{errors}} = useForm();
 
     const doubleCheckBox1 = ()=>{
@@ -87,6 +84,9 @@ const ListeningSection = () =>{
         }}
 
     const onSubmitListening = data => {
+        dispatch(updateListening())
+        
+        console.log('listeningDones', Dones)
         let countRight = 0;
         for(let i=1; i<=40;i++){
             if(i>=15&&i<=30){
@@ -138,13 +138,12 @@ const ListeningSection = () =>{
         report['Score'] = countRight.toString();
         console.log('data', data)
         console.log('report',report)
-        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC List A', report)
-        .then(response=>{console.log('response',response)})
+        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC List A', report).then(response=>{console.log('response',response)})
         //history.push({pathname:'/reading', listening:true})
-        Dones.listening = true;
+
 
         if(Dones.reading){
-            if(Dones.writing){alert('Test registered!\nEm breve seu resultado será enviado');console.log('you are done')}
+            if(Dones.writing){alert('Test registered!\nEm breve seu resultado será enviado');window.location.reload();}
             else{history.push({pathname:'/writing',Dones})}
         }else{history.push({pathname:'/reading',Dones})}
         console.log('Dones',Dones)

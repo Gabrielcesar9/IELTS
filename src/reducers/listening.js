@@ -1,8 +1,8 @@
 const listeningReducer = (state=false, action) =>{
     switch(action.type){
-        case('DONE'):
+        case('LISTENINGDONE'):
             return true
-        case('UNDONE'):
+        case('LISTENINGUNDONE'):
             return false
         default:
             return state

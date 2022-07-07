@@ -1,18 +1,18 @@
 export const updateReading = ()=>{
     return {
-        type:'DONE'
+        type:'READINGDONE'
     }
 }
 
-export const updateLeading = ()=>{
+export const updateListening = ()=>{
     return {
-        type:'DONE'
+        type:'LISTENINGDONE'
     }
 }
 
-export const updateWeading = ()=>{
+export const updateWriting = ()=>{
     return {
-        type:'DONE'
+        type:'WRITINGDONE'
     }
 }
 

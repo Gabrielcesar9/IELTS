@@ -1,8 +1,8 @@
 const readingReducer = (state=false, action) =>{
     switch(action.type){
-        case('DONE'):
+        case('READINGDONE'):
             return true
-        case('UNDONE'):
+        case('READINGUNDONE'):
             return false
         default:
             return state

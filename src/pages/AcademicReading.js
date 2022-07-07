@@ -2,25 +2,26 @@ import React from 'react'
 import {useForm} from 'react-hook-form'
 import {useHistory} from 'react-router-dom'
 import axios from 'axios';
+import {useSelector, useDispatch } from 'react-redux';
+import { updateReading } from '../actions';
 
 const ReadingSection = () => {
-    scroll(0,0);
-    window.onbeforeunload = function() { return "Your work will be lost."; };
-    
+    //scroll(0,0);
+    window.onbeforeunload = function() { return "Your work will be lost."; };  
     const history = useHistory();
+    const dispatch = useDispatch()
+    var Dones = {reading:useSelector(state=>state.Reading),
+        listening:useSelector(state=>state.Listening),
+        writing:useSelector(state=>state.Writing),
+        email:useSelector(state=>state.Email)}
+    console.log('Dones', Dones) 
+
     window.addEventListener("keydown", (e) => {
         if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
           e.preventDefault();
         }
       })
-    
-    if(history.location.Dones){
-        var Dones = history.location.Dones
-    }else{
-        var Dones = {reading:false,
-            listening:false,
-            writing:false,
-            email:history.location.state}}
+
     
     const answers = {
         '1':['four','14','1four'],
@@ -86,6 +87,9 @@ const ReadingSection = () => {
         }}
 
     const onSubmitReading = data => {
+        dispatch(updateReading())
+        
+        console.log('readingDones', Dones)
         let countRight = 0;
         for(let i=1; i<=40;i++){
             if((i>=9&&i<=22) || (i>=27&&i<=33) || i==40){
@@ -142,15 +146,12 @@ const ReadingSection = () => {
         report['Score'] = countRight.toString();
         report['Question 40'] = document.querySelector(`input[name="40"]:checked`).value;
         console.log('report',report)
-        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC Read A', report)
-        .then(response=>{console.log('response',response)})
-
-        Dones.reading = true;
+        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC Read A', report).then(response=>{console.log('response',response)})
+        
         if(Dones.listening){
-            if(Dones.writing){alert('Test registered!\nEm breve seu resultado será enviado');console.log('you are done')}
-            else{history.push({pathname:'/writing',Dones})}
-        }else{history.push({pathname:'/listening',Dones})}
-        console.log('Dones',Dones)
+            if(Dones.writing){alert('Test registered!\nEm breve seu resultado será enviado');window.location.reload();}
+            else{history.push({pathname:'/writing',})}
+        }else{history.push({pathname:'/listening'})}
          
     }
 
@@ -601,7 +602,7 @@ const ReadingSection = () => {
                             <h4 style={{'margin-left':0}}>Studies of marine debris found the biggest threats were</h4>
                             <li className='formli'>plastic (not metal or wood)</li>
                             <li className='formli'>bits of debris that were <b>34</b> <input {...register("34")} required/> (harmful to animals)</li>
-                            <h4>There was little research into <b>35</b> <input {...register("35")} required/> e.g. from synthetic fibres.</h4>
+                            <h4>There was little research into <b style={{fontSize:'x-large', fontFamily: "'Space Mono', monospace"}}>35</b> <input {...register("35")} required/> e.g. from synthetic fibres.</h4>
                             <h4>Drawbacks of the studies examined</h4>
                             <li className='formli'>most of them focused on individual animals, not entire <b>36</b> <input {...register("36")} required/></li>
                             <li className='formli'>the <b>37</b> <input {...register("37")} required/> of plastic used in the lab did not always reflected those in the ocean</li>
@@ -611,13 +612,13 @@ const ReadingSection = () => {
                                 <li>- the impact of a reduction in numbers on the <b>38</b> <input {...register("38")} required/> of that species</li>
                                 <li>- the impact on the ecosystem</li>
                             </ul>
-                            <h4>Rochman says more information is needed on the possible impact of future <br/> <b>39</b> <input {...register("39")} required/> (e.g. involving oil).</h4>
+                            <h4>Rochman says more information is needed on the possible impact of future <br/> <b style={{fontSize:'x-large', fontFamily: "'Space Mono', monospace"}}>39</b> <input {...register("39")} required/> (e.g. involving oil).</h4>
                         </ul>
                     </div>
                 </div>
                 <div name="Question40">
                     <p><i>Choose the correct letter, <b>A</b>, <b>B</b>, <b>C</b> or <b>D</b></i>.</p>
-                    <p><b>40</b> What would be the best tittle for this passage?</p>
+                    <p><b style={{fontSize:'x-large', fontFamily: "'Space Mono', monospace"}}>40</b> What would be the best tittle for this passage?</p>
                     <ol type='A'>
                         <table>
                             <tbody>

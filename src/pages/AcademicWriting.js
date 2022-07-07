@@ -5,20 +5,19 @@ import im1 from '../assets/images/IELTS_Academic_A1.png'
 import im2 from '../assets/images/IELTS_Academic_A2.png'
 import "../test.css"
 import axios from 'axios';
+import {useSelector, useDispatch } from 'react-redux'
+import { updateWriting } from '../actions'
 
 const WritingSection = () => {
+    const dispatch = useDispatch();
     scroll(0,0);
     window.onbeforeunload = function() { return "Your work will be lost."; };
     const history = useHistory();
     const {register, handleSubmit, formState:{errors}} = useForm();
-
-    if(history.location.Dones){
-        var Dones = history.location.Dones;
-    }else{
-        var Dones = {reading:false,
-            listening:false,
-            writing:false,
-            email:history.location.state}}
+    var Dones = {reading:useSelector(state=>state.Reading),
+        listening:useSelector(state=>state.Listening),
+        writing:useSelector(state=>state.Writing),
+        email:useSelector(state=>state.Email)}
     
     const handleChange1 = () =>{
         let countWord1 = (event.target.value).split(' ');
@@ -36,23 +35,24 @@ const WritingSection = () => {
         if(amount < 0){span.textContent = '+' + String(-amount);}
         else { span.textContent = amount;}
     }
-    var reportReading = {}
+    var report = {}
     const onSubmiWriting = data => {
+        dispatch(updateWriting())
+        console.log('writingDones', Dones)
         const Writing1 = document.getElementById('Writing1').value;
         const Writing2 = document.getElementById('Writing2').value;
         console.log(Writing1,Writing2)
-        //report['Email Address'] = Dones.email
-        reportReading['Timestamp'] = new Date().toLocaleString();
-        reportReading['Writing Task 1'] = Writing1
-        reportReading['Writing Task 2'] = Writing2
-        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC Writ A', report)
-        .then(response=>{console.log('response',response), console.log('Dones',Dones)})
-        Dones.writing = true;
+        report['Email Address'] = Dones.email
+        report['Timestamp'] = new Date().toLocaleString();
+        report['Writing Task 1'] = Writing1
+        report['Writing Task 2'] = Writing2
+        axios.post('https://sheet.best/api/sheets/b6879cbc-6815-4f88-b88c-ebbd0820fe93/tabs/AC Writ A', report).then(response=>{console.log('response',response), console.log('Dones',Dones)})
+        
+
         if(Dones.listening){
-            if(Dones.reading){alert('Test registered!\nEm breve seu resultado será enviado');console.log('you are done')}
-            else{history.push({pathname:'/reading',Dones})}
-        }else{history.push({pathname:'/listening',Dones})}
-        console.log('Dones',Dones)
+            if(Dones.reading){alert('Test registered!\nEm breve seu resultado será enviado');window.location.reload();}
+            else{history.push({pathname:'/reading'})}
+        }else{history.push({pathname:'/listening'})}
         
     }
     return(

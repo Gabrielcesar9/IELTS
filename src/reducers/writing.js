@@ -1,8 +1,8 @@
 const writingReducer = (state=false, action) =>{
     switch(action.type){
-        case('DONE'):
+        case('WRITINGDONE'):
             return true
-        case('UNDONE'):
+        case('WRITINGUNDONE'):
             return false
         default:
             return state
